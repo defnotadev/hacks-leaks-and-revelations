@@ -2,7 +2,7 @@ import click
 import os
 import csv
 import html
-
+import string
 
 @click.command()
 @click.argument("emailbuilder_csv_path")
@@ -17,8 +17,10 @@ def main(emailbuilder_csv_path, output_folder_path):
     with open(emailbuilder_csv_path) as f:
         reader = csv.DictReader(f)
         for row in reader:
+            date_text = row["DateSent"].translate(str.maketrans('', '', string.punctuation))
+            subject_text = row["EmailSubject"].translate(str.maketrans('', '', string.punctuation))
             filename = (
-                f"{row['EmailBuilderID']}_{row['DateSent']}_{row['EmailSubject']}.html"
+                f"{row['EmailBuilderID']}_{date_text}_{subject_text}.html"
             )
             filename = filename.replace("/", "-")
             filename = os.path.join(output_folder_path, filename)
